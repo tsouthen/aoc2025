@@ -20,8 +20,8 @@ const sampleData = `162,817,812
 425,690,689`;
 
 export function solve(input: string) {
-  const p1 = solve1(sampleData);
-  const p2 = solve2(sampleData);
+  const p1 = solve1(input);
+  const p2 = solve2(input);
   return { part1: p1, part2: p2 };
 }
 
@@ -32,7 +32,7 @@ interface Distance {
 }
 
 interface Circuit {
-  connectionPairs: Array<[number, number]>;
+  connections: number[];
 }
 
 const distanceSquared = (a: number[], b: number[]) => a.reduce((acc, val, idx) => acc + Math.pow(val - b[idx], 2), 0);
@@ -56,40 +56,33 @@ function solve1(input: string, part2 = false) {
   distances.sort((a, b) => a.distance - b.distance);
 
   const circuits = new Array<Circuit>();
+
+  // fill circuits, one for each junction initially
+  for (let i = 0; i < junctions.length; i++) {
+    circuits.push({ connections: [i] });
+  }
+
   const maxIterations = part2 ? distances.length : junctions.length === 20 ? 10 : junctions.length;
   for (let i = 0; i < maxIterations; i++) {
     const currDist = distances[i];
-    const fromCircuit = circuits.find((circuit) =>
-      circuit.connectionPairs.some((pair) => pair[0] === currDist.from || pair[1] === currDist.from)
-    );
-    const toCircuit = circuits.find((circuit) =>
-      circuit.connectionPairs.some((pair) => pair[0] === currDist.to || pair[1] === currDist.to)
-    );
+    const fromCircuit = circuits.find((circuit) => circuit.connections.includes(currDist.from));
+    const toCircuit = circuits.find((circuit) => circuit.connections.includes(currDist.to));
 
-    if (!fromCircuit && !toCircuit) {
-      circuits.push({ connectionPairs: [[currDist.from, currDist.to]] });
-    } else if (fromCircuit && !toCircuit) {
-      fromCircuit.connectionPairs.push([currDist.from, currDist.to]);
-    } else if (!fromCircuit && toCircuit) {
-      toCircuit.connectionPairs.push([currDist.from, currDist.to]);
-    } else if (fromCircuit && toCircuit) {
-      if (fromCircuit !== toCircuit) {
-        // connect the junctions and combine the circuits
-        fromCircuit.connectionPairs.push([currDist.from, currDist.to], ...toCircuit.connectionPairs);
-        const toIndex = circuits.indexOf(toCircuit);
-        circuits.splice(toIndex, 1);
+    if (fromCircuit && toCircuit && fromCircuit !== toCircuit) {
+      fromCircuit.connections.push(...toCircuit.connections);
+      const toIndex = circuits.indexOf(toCircuit);
+      circuits.splice(toIndex, 1);
 
-        if (part2 && circuits.length === 1) {
-          return junctions[currDist.from][0] * junctions[currDist.to][0];
-        }
+      if (part2 && circuits.length === 1) {
+        return junctions[currDist.from][0] * junctions[currDist.to][0];
       }
     }
   }
 
-  circuits.sort((a, b) => b.connectionPairs.length - a.connectionPairs.length);
+  circuits.sort((a, b) => b.connections.length - a.connections.length);
   const topThree = circuits.slice(0, 3);
   if (topThree.length === 3) {
-    return topThree.reduce((acc, circuit) => acc * (circuit.connectionPairs.length + 1), 1);
+    return topThree.reduce((acc, circuit) => acc * circuit.connections.length, 1);
   }
   return 0;
 }
