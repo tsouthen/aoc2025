@@ -71,3 +71,5 @@ function solve2(grid: string[][]) {
   }
   return pathCounts[1].reduce((a, b) => a + b, 0);
 }
+
+// Day 7 result: { part1: 1581, part2: 73007003089792 }
