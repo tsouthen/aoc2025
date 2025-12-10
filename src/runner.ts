@@ -11,10 +11,25 @@ export async function getInput(day: number) {
   }
 }
 
-export async function runDay(day: number) {
+export async function runDay(day?: number) {
   try {
+    if (day === undefined) {
+      // get day from current date
+      const now = new Date();
+      day = now.getDate();
+    }
+
+    const fileName = `./day${String(day).padStart(2, "0")}.ts`;
+    // see if file exists
+    try {
+      await fs.access(path.resolve(process.cwd(), "src", fileName));
+    } catch {
+      console.log(`Day ${day} file not found.`);
+      return;
+    }
+
     // dynamic import expects extension when using nodenext
-    const mod = await import(`./day${String(day).padStart(2, "0")}.ts`);
+    const mod = await import(fileName);
     if (typeof mod.solve !== "function") {
       console.log(`Day ${day} has no exported solve(input) function.`);
       return;

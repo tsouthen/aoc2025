@@ -32,3 +32,11 @@ function solve1(input: string) {
 function solve2(input: string) {
   return 0;
 }
+
+// add test code here to run when executing this file directly
+if ((import.meta as any).main) {
+  const result = solve(sampleData);
+  console.log("Sample Data Results:");
+  console.log("Part 1:", result.part1);
+  console.log("Part 2:", result.part2);
+}

@@ -3,14 +3,35 @@
   "configurations": [
     {
       "name": "Debug TypeScript (node)",
-      "type": "pwa-node",
+      "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}",
       "runtimeExecutable": "node",
-      "args": ["--enable-source-maps","${workspaceFolder}/src/index.ts"],
+      "args": [
+        "--enable-source-maps",
+        "${file}"
+      ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "skipFiles": ["<node_internals>/**"]
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    },
+    {
+      "name": "Debug index.ts (node)",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "node",
+      "args": [
+        "--enable-source-maps",
+        "${workspaceFolder}/src/index.ts"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
     }
   ]
 }

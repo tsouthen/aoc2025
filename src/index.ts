@@ -3,7 +3,7 @@
 import { runDay } from "./runner.ts";
 
 async function main() {
-  await runDay(9);
+  await runDay();
 }
 
 main().catch((err) => {
